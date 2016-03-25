@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JustCall!</string>
+    <string name="tv_version">ver.0.1</string>
+    <string name="main_btn_start">CONTACTS</string>
+    <string name="main_btn_quick">QUICK START</string>
+    <string name="action_settings">Setting</string>
+    <string name="name_text">Some One</string>
+    <string name="dialog_text">PLEASE SELECT</string>
+    <string name="dialog_select_text">请选择拨打模式</string>
+    <string name="dialog_timeup_text">时间到！准备拨打电话！</string>
+    <string name="dialog_mode1_text">马上为您拨打！</string>
+    <string name="dialog_mode2_text">请等待片刻，稍后为您拨打</string>
+    <string name="dialog_mode3_text">也许下一秒后为您拨打^_^</string>
+    <string name="btn1_text">立即</string>
+    <string name="btn2_text">定时</string>
+    <string name="btn3_text">随机</string>
+    <string name="contact_title">选择联系人</string>
+    <string name="contact_dialog_item1">想打给TA</string>
+    <string name="contact_dialog_item2">查看详情</string>
+    <string name="contact_dialog_item3">删掉TA</string>
+    <string name="contact_delete_title">是否删除此联系人</string>
+    <string name="contact_delete_positive">狠心删掉</string>
+    <string name="contact_delete_negative">心软放弃</string>
+    <string name="contact_delete_toast">此联系人已经消失了</string>
+    <string name="timingdial_title">选择拨打模式</string>
+    <string name="timingdial_mode1">拨打模式：立即</string>
+    <string name="timingdial_mode2">拨打模式：定时</string>
+    <string name="timingdial_mode3">拨打模式：随机</string>
+
+</resources>

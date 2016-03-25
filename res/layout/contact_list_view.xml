@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contact_list_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
+
+    <com.simoncherry.justcall.Custom.SlidingLinearLayout
+        android:id="@+id/slidingview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true" >
+
+        <ListView
+            android:id="@+id/contact_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#000000"
+            android:divider="#e0e0e0"
+            android:dividerHeight="1dip"
+            android:fadingEdge="none"
+            android:scrollbars="none"
+            android:scrollingCache="false"
+            android:visibility="visible" />
+    </com.simoncherry.justcall.Custom.SlidingLinearLayout>
+
+    <com.simoncherry.justcall.Custom.QuickAlphabeticBar
+        android:id="@+id/fast_scroller"
+        android:layout_width="22dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="top|end|center"
+        android:layout_marginTop="0dip"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/sortlistview_sidebar_background" >
+    </com.simoncherry.justcall.Custom.QuickAlphabeticBar>
+
+    <TextView
+        android:id="@+id/fast_position"
+        android:layout_width="70dip"
+        android:layout_height="70dip"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_margin="34dip"
+        android:background="@drawable/sort_icon_bg_click"
+        android:gravity="center"
+        android:padding="2dip"
+        android:textColor="#ffffff"
+        android:textSize="48dip"
+        android:visibility="invisible" />
+
+</RelativeLayout>
