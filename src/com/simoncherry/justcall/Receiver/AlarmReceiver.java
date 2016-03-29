@@ -21,8 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		this.context = context;
 		SharedPreferences preference = context.getSharedPreferences("justcall",
-				Context.MODE_PRIVATE);
-		telNumber = preference.getString("number", "10086");
+				Context.MODE_MULTI_PROCESS);		
 		time = preference.getLong("time", 0);
 		if (time != 0) {
 			PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
@@ -31,7 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 			am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			am.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
 			Editor edit = context.getSharedPreferences(
-					"justcall", Context.MODE_PRIVATE).edit();
+					"justcall", Context.MODE_MULTI_PROCESS).edit();
 			edit.putLong("time", 0);
 			edit.commit();
 		}
@@ -41,6 +40,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	private void PhoneCall() {
 		Log.i(TAG, "PhoneCall");
+		SharedPreferences preference = context.getSharedPreferences("justcall",
+				Context.MODE_MULTI_PROCESS);
+		telNumber = preference.getString("number", "10086");
+		Log.i("telNumber", telNumber);
 		Uri localUri = Uri.parse("tel:" + telNumber);
 		Intent call = new Intent(Intent.ACTION_CALL, localUri);
 		call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

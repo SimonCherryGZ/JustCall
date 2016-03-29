@@ -26,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TimingDialActivity extends Activity implements OnClickListener{
 	private LinearLayout layout_btn;
@@ -132,7 +133,7 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 				}
 				
 				SharedPreferences preference = getSharedPreferences("justcall",
-						Context.MODE_PRIVATE);
+						Context.MODE_MULTI_PROCESS);
 				Editor edit = preference.edit();
 				edit.putString("name", name_str);
 				edit.putString("number", number_str);
@@ -203,6 +204,14 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 		calendar.set(Calendar.SECOND, mSecond + setSecond);
 		calendar.set(Calendar.MILLISECOND, 0);
 		
+		SharedPreferences preference = getSharedPreferences(
+				"justcall", Context.MODE_MULTI_PROCESS);
+		Editor edit = preference.edit();
+		edit.putString("name", name_str);
+		edit.putString("number", number_str);
+		edit.putLong("time", calendar.getTimeInMillis());
+		edit.commit();
+		
 		Intent intent = new Intent(
 				TimingDialActivity.this,
 				AlarmReceiver.class);
@@ -214,14 +223,6 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 		am.set(AlarmManager.RTC_WAKEUP,
 				calendar.getTimeInMillis(),
 				pendingIntent);
-		
-		SharedPreferences preference = getSharedPreferences(
-				"justcall", Context.MODE_PRIVATE);
-		Editor edit = preference.edit();
-		edit.putString("name", name_str);
-		edit.putString("number", number_str);
-		edit.putLong("time", calendar.getTimeInMillis());
-		edit.commit();
 	}
 
 }
