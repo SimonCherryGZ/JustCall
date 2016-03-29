@@ -1,5 +1,6 @@
 package com.simoncherry.justcall.Receiver;
 
+import com.simoncherry.justcall.R;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -18,6 +19,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	private String telNumber = "10086";
 	private long time = 0;
 
+	@Override
 	public void onReceive(Context context, Intent intent) {
 		this.context = context;
 		SharedPreferences preference = context.getSharedPreferences("justcall",
@@ -35,19 +37,28 @@ public class AlarmReceiver extends BroadcastReceiver {
 			edit.commit();
 		}
 
-		PhoneCall();
+		PhoneCall(context);
 	}
 	
-	private void PhoneCall() {
+	private void PhoneCall(Context context) {
 		Log.i(TAG, "PhoneCall");
 		SharedPreferences preference = context.getSharedPreferences("justcall",
 				Context.MODE_MULTI_PROCESS);
 		telNumber = preference.getString("number", "10086");
 		Log.i("telNumber", telNumber);
+		
+		// TODO
+		Intent intent = new Intent();
+		intent.setAction("com.simoncherry.justcall.dial.receiver");
+		intent.putExtra("data", context.getString(R.string.dialog_over_text));
+		//context.sendBroadcast(intent);
+		
 		Uri localUri = Uri.parse("tel:" + telNumber);
 		Intent call = new Intent(Intent.ACTION_CALL, localUri);
 		call.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(call);
+		
+		context.sendBroadcast(intent);
 	}
 	
 }

@@ -10,8 +10,10 @@ import com.simoncherry.justcall.R;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -83,7 +85,7 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_timing_dial);
 		calendar = Calendar.getInstance();
-		setTitle(R.string.timingdial_title);
+		setTitle(R.string.timingdial_title_select);
 		
 		layout_btn = (LinearLayout)findViewById(R.id.layout_btn);
 		name_text = (TextView)findViewById(R.id.name_text);
@@ -97,9 +99,13 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 		
 		Init();
 		
+		// TODO
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("com.simoncherry.justcall.dial.receiver");
+		registerReceiver(DialResultReceiver, filter);
+		
 		layout_btn.startAnimation(mlayoutAnim);
 		layout_btn.setVisibility(View.VISIBLE);
-
 	}
 	
 	public void Init(){
@@ -224,5 +230,21 @@ public class TimingDialActivity extends Activity implements OnClickListener{
 				calendar.getTimeInMillis(),
 				pendingIntent);
 	}
+	
+	public BroadcastReceiver DialResultReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                final String data = intent.getStringExtra("data");
+                System.out.print(data);
+                //dialog_text.setText(data);
+                
+                new Handler().postDelayed(new Runnable(){   
+                    public void run() {   
+                    	setTitle(R.string.timingdial_title_over);
+                    	dialog_text.setText(data);
+                    }   
+                 }, 2000);
+        }
+	};
 
 }
