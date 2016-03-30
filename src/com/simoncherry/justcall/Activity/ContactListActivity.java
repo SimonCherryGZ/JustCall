@@ -45,10 +45,9 @@ public class ContactListActivity extends Activity {
 	private QuickAlphabeticBar alphabeticBar;
 
 	private Map<Integer, ContactBean> contactIdMap = null;
+	private Map<String, ContactBean> contactNumberMap = null;
 	
 	private int heartPos = -1;
-	private String saveName = "China Mobile";
-	private String saveNumber = "10086";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,18 +104,19 @@ public class ContactListActivity extends Activity {
 	private void init() {
 		SharedPreferences preference = getSharedPreferences("justcall",
 				Context.MODE_PRIVATE);
-		heartPos = preference.getInt("heart_pos", -1);
-		//adapter.setHeartPos(heartPos);
+		heartPos = preference.getInt("heart_pos", 0);
 		Log.v("loadPos", String.valueOf(heartPos));
 		
 		Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
 
-		String[] projection = { ContactsContract.CommonDataKinds.Phone._ID,
-				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-				ContactsContract.CommonDataKinds.Phone.DATA1, "sort_key",
-				ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-				ContactsContract.CommonDataKinds.Phone.PHOTO_ID,
-				ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY };
+		String[] projection = { 
+					ContactsContract.CommonDataKinds.Phone._ID,
+					ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+					ContactsContract.CommonDataKinds.Phone.DATA1, "sort_key",
+					ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+					ContactsContract.CommonDataKinds.Phone.PHOTO_ID,
+					ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY, 
+				};
 
 		asyncQueryHandler.startQuery(0, null, uri, projection, null, null,
 				"sort_key COLLATE LOCALIZED asc");
@@ -138,6 +138,7 @@ public class ContactListActivity extends Activity {
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			if (cursor != null && cursor.getCount() > 0) {
 				contactIdMap = new HashMap<Integer, ContactBean>();
+				contactNumberMap = new HashMap<String, ContactBean>();
 				list = new ArrayList<ContactBean>();
 				cursor.moveToFirst();
 				
@@ -152,51 +153,54 @@ public class ContactListActivity extends Activity {
 					Long photoId = cursor.getLong(5);
 					String lookUpKey = cursor.getString(6);
 					
-					ContactBean contact = new ContactBean();
-					contact.setDesplayName(name);
-					contact.setPhoneNum(number);
-					contact.setSortKey(sortKey);
-					contact.setContactId(contactId);  //fix by simon
-					contact.setPhotoId(photoId);
-					contact.setLookUpKey(lookUpKey);
-					if(i == heartPos){
-						contact.setHeart(true);
-						Log.v("pos_match", String.valueOf(i));
-						SharedPreferences preference = getSharedPreferences(
-								"justcall", Context.MODE_PRIVATE);
-						Editor edit = preference.edit();
-						edit.putString("name", name);
-						edit.putString("number", number);
-						edit.commit();
-						saveName = name;
-						saveNumber =number;
+					//if (contactIdMap.containsKey(contactId) == false) {
+					if (contactNumberMap.containsKey(number) == false) {
 						
-					}else{
-						contact.setHeart(false);
-					}
-					list.add(contact);
-					contactIdMap.put(contactId, contact);
-					
-					/*
-					if (contactIdMap.containsKey(contactId)) {
-						// TODO
-					} else {
-						//ContactBean contact = new ContactBean();
+						ContactBean contact = new ContactBean();
 						contact.setDesplayName(name);
 						contact.setPhoneNum(number);
 						contact.setSortKey(sortKey);
 						contact.setContactId(contactId);  //fix by simon
 						contact.setPhotoId(photoId);
 						contact.setLookUpKey(lookUpKey);
-						
-						//Log.v("log_i", String.valueOf(i));
+//						if(i == heartPos){
+//							contact.setHeart(true);
+//							Log.v("pos_match", String.valueOf(i));
+//							SharedPreferences preference = getSharedPreferences(
+//									"justcall", Context.MODE_PRIVATE);
+//							Editor edit = preference.edit();
+//							edit.putString("name", name);
+//							edit.putString("number", number);
+//							edit.commit();
+//							saveName = name;
+//							saveNumber =number;
+//							
+//						}else{
+//							contact.setHeart(false);
+//						}
 						list.add(contact);
-
-						contactIdMap.put(contactId, contact);
+						//contactIdMap.put(contactId, contact);
+						contactNumberMap.put(number, contact);
 					}
-					*/
+						
 				}
 				if (list.size() > 0) {
+					// TODO
+					for(int i=0; i<list.size(); i++){
+						if(i == heartPos){
+							list.get(i).setHeart(true);
+							SharedPreferences preference = getSharedPreferences(
+									"justcall", Context.MODE_MULTI_PROCESS);
+							Editor edit = preference.edit();
+							edit.putString("name", list.get(i).getDisplayName());
+							edit.putString("number", list.get(i).getPhoneNum());
+							edit.commit();
+							
+						}else{
+							list.get(i).setHeart(false);
+						}						
+					}
+					
 					setAdapter(list);
 				}
 			}
@@ -210,11 +214,7 @@ public class ContactListActivity extends Activity {
 		adapter = new ContactListAdapter(this, list, alphabeticBar);
 		
 		adapter.setHeartPos(heartPos);
-		/*
-		if(heartPos > -1){
-			adapter.setHeartState(true);
-		}
-		*/
+
 		contactList.setAdapter(adapter);
 		alphabeticBar.init(ContactListActivity.this);
 		alphabeticBar.setListView(contactList);
@@ -234,18 +234,10 @@ public class ContactListActivity extends Activity {
 			"想打给TA", 
 			"查看详情",
 			"删掉TA" };
-	/*
-	private String[] OptionStr = new String[] { 
-			getResources().getString(R.string.contact_dialog_item1), 
-			getResources().getString(R.string.contact_dialog_item2),
-			getResources().getString(R.string.contact_dialog_item3) };
-	*/
 	
 		private void showContactDialog(final String[] arg ,final ContactBean cb, final int position){
-			new AlertDialog.Builder(this).setTitle(cb.getDisplayName()).setItems(arg,
-			//new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom))
-			//						.setTitle(cb.getDisplayName()).setItems(arg,		
-					new DialogInterface.OnClickListener(){
+			new AlertDialog.Builder(this).setTitle(cb.getDisplayName()).setItems(
+					arg, new DialogInterface.OnClickListener(){
 				public void onClick(DialogInterface dialog, int which){
 
 					Uri uri = null;

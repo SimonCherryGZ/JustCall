@@ -35,7 +35,6 @@ public class ContactListAdapter extends BaseAdapter {
 	private HashMap<String, Integer> alphaIndexer;
 	private String[] sections;
 	private Context ctx;
-	//private boolean heartState = false;
 	private int heartPos = -1;
 	
 	//add by simon 2016.02.16
@@ -201,10 +200,8 @@ public class ContactListAdapter extends BaseAdapter {
 			
 			heart_states.put(String.valueOf(position), false);
 			holder.heart.setImageResource(R.drawable.icon_heart_default);	
-			//contact.setHeart(false);
 		}else{
 			holder.heart.setImageResource(R.drawable.icon_heart_active);
-			//contact.setHeart(true);
 		}
 		
 		return convertView;
